@@ -1,11 +1,12 @@
 import { title } from "process";
 import { userModel } from "../Models/user.js";
-import { pick } from "lodash"
+import { forEach, pick } from "lodash"
 
 export async function getAllUsers(req, res) {
     try {
         const users = await userModel.find()
-        res.json({ users })
+        const usersWithoutPassword = users.map(user => lodash.omit(user.toObject(), ["password"]))
+        res.json({ usersWithoutPassword })
     }
     catch (e) {
         res.status(400).json({
@@ -18,18 +19,19 @@ export async function getAllUsers(req, res) {
 export async function getUser(req, res) {
     try {
         let { id } = req.params;
-        let data = await userModel.findById(id)
-        if (!data) {
+        let user = await userModel.findById(id)
+        if (!user) {
             return res.status(404).json({
                 title: "can`t get by id",
                 message: "no user with such id" + id
             })
         }
-        res.json({ data })
+        const userWithoutPassword = lodash.omit(user.toObject(), ['password']);
+        res.json({ userWithoutPassword })
     }
     catch (e) {
-        res.status("400").json({
-            title: "not found",
+        res.status("500").json({
+            title: "server error",
             message: e.message
         })
     }
