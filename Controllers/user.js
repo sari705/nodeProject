@@ -1,6 +1,7 @@
 import { title } from "process";
 import { userModel } from "../Models/user.js";
-import { forEach, pick } from "lodash"
+import lodash from "lodash";
+const {omit} = lodash;
 
 export async function getAllUsers(req, res) {
     try {
@@ -50,7 +51,8 @@ export async function logIn(req, res) {
                 message: "log in failed"
             })
         }
-        res.json({ data })
+        let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
+        res.json({ dataWithoutPassword })
     }
     catch (e) {
         res.status("500").json({
@@ -70,7 +72,7 @@ export async function signUp(req, res) {
     }
 
     try {
-        let newUser = new userModel(body)
+        let newUser = new userModel({...body, role:"USER"})
         await newUser.save()
         return res.json(newUser)
     }
@@ -92,13 +94,15 @@ export async function updateUser(req, res) {
     }
     try {
         let data = await userModel.findByIdAndUpdate(id, body, { new: true })
+        
         if (!data) {
             return res.status(404).json({
                 title: "not found",
                 message: "no user with such id " + id
             })
         }
-        res.json(data)
+        let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
+        res.json({ dataWithoutPassword })
     }
     catch (e) {
         res.status("400").json(
