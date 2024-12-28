@@ -28,3 +28,11 @@
 12/25/2024---> PUT /api/user/676c57f3b34ce27f36bb772d
 12/25/2024---> PUT /api/user/676c57f3b34ce27f36bb772d
 12/25/2024---> POST /api/order
+12/28/2024---> POST /api/product
+12/28/2024---> GET /api/product/
+12/28/2024---> GET /api/product/
+12/28/2024---> GET /api/product/
+12/28/2024---> POST /api/order
+12/28/2024---> GET /api/user/676c57f3b34ce27f36bb772d
+12/28/2024---> GET /api/order
+12/28/2024---> GET /api/order/676c57f3b34ce27f36bb772d

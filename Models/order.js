@@ -1,7 +1,7 @@
 import {Schema, model, ObjectId} from "mongoose";
 
 const orderSchema=new Schema({
-    date: {type:Date, default:new Date()},
+    date:Date,
     deadline: Date,
     address: String,
     userId: {type: ObjectId, ref: "user"},
