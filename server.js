@@ -24,6 +24,6 @@ app.use("/api/order", orderRouter);
 
 
 let port = process.env.PORT;
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
     console.log(`app is runing on port ${port}`);
 })
