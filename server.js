@@ -23,7 +23,7 @@ app.use("/api/order", orderRouter);
 
 
 
-let port = process.env.PORT || 8000;
+let port = process.env.PORT;
 app.listen(port,"localhost", () => {
     console.log(`app is runing on port ${port}`);
 })
