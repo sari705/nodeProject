@@ -73,6 +73,7 @@ export async function signUp(req, res) {
 
     try {
         let newUser = new userModel({...body, role:"USER"})
+        console.log("newUser: ", newUser)
         await newUser.save()
         return res.json(newUser)
     }

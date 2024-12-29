@@ -1,4 +1,5 @@
 import { orderModel } from "../Models/order.js";
+import {userModel} from "../Models/user.js";
 import mongoose from "mongoose"; 
 
 export async function getAllOrders(req, res) {
@@ -83,6 +84,21 @@ export async function addOrder(req, res) {
                 message: "user id is not valid",
             });
         }
+
+        try {
+            const userExists = await userModel.findById(body.userId);
+            if (!userExists) {
+                return res.status(400).json({
+                    title: "details are not correct",
+                    message: "user does not exist",
+                });
+            }
+        } catch (error) {
+            return res.status(500).json({
+                title: "server error",
+                message: "error checking user existence: " + error.message,
+            });
+        }
     
         if (body.address.length<3) {
             return res.status(400).json({
@@ -105,7 +121,7 @@ export async function addOrder(req, res) {
             });
         }
         
-        let newOrder = new orderModel({...body, isSetOff:false, Date: new Date()});
+        let newOrder = new orderModel({...body, isSetOff:false, Date:new Date(Date.now())});
         try {
             await newOrder.save();
             res.json(newOrder);
