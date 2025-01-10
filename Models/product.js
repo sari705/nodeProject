@@ -11,7 +11,7 @@ const productSchema = Schema({
     price: Number,
     categories: {
         type: String,
-        enum: Object.keys(Categories) // הגדרה כ-enum מתוך הערכים של Categories
+        enum: Categories // הגדרה כ-enum מתוך הערכים של Categories
     },
     sizes: [String],
     colors: [String],
