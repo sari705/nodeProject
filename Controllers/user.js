@@ -71,6 +71,22 @@ export async function signUp(req, res) {
         })
     }
 
+    try{
+        let users = await userModel.find({ username:body.username, password: body.password })
+        if (users.length > 0) {
+            return res.status("400").json({
+                title: "log in",
+                message: "there is user with this details"
+            })
+        }
+    }
+    catch (e) {
+        return res.status("400").json({
+            title: "server error",
+            message: "could not check for validation"
+        })
+    }
+
     try {
         let newUser = new userModel({...body, role:"USER"})
         console.log("newUser: ", newUser)
