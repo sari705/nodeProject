@@ -21,7 +21,7 @@ app.use(logToFile);
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
 app.use("/api/order", orderRouter);
-app.use("/api/enums", )
+app.use("/api/enums", enumRouter)
 
 
 
