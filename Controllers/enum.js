@@ -2,8 +2,7 @@ import Categories from "../utils/categories.js"
 import TagsEnum from "../utils/tags.js"
 
 export async function getCategiriesEnum(req, res){
-    try {
-            
+    try {            
             res.json({ Categories })
         }
         catch (e) {
@@ -16,7 +15,7 @@ export async function getCategiriesEnum(req, res){
 
     return Categories;
 }
-export async function getTagsEnum(){
+export async function getTagsEnum(req, res){
     try {
         res.json({ TagsEnum })
     }
