@@ -24,4 +24,6 @@ const Colors =Object.freeze([
     "שנהב",
     "פחם",
   ]);
+
+  export default Colors;
   
