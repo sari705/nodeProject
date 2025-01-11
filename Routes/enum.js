@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { getTagsEnum, getCategiriesEnum } from "../Controllers/enum.js";
+import { getTagsEnum, getCategiriesEnum, getColorsEnum } from "../Controllers/enum.js";
 
 const router = Router()
 
 router.get("/categories", getCategiriesEnum)
 router.get("/tags", getTagsEnum)
-router.get("/colors", getTagsEnum)
+router.get("/colors", getColorsEnum)
 
 export default router
