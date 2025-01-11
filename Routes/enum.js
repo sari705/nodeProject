@@ -5,5 +5,6 @@ const router = Router()
 
 router.get("/categories", getCategiriesEnum)
 router.get("/tags", getTagsEnum)
+router.get("/colors", getTagsEnum)
 
 export default router
