@@ -152,7 +152,7 @@ export async function updateProduct(req, res) {
     let { body } = req;
     
 
-    if (body.name?.length < 3) {
+    if (body.name?.length >0&&body.name.length <3) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product name is too short",
@@ -173,13 +173,6 @@ export async function updateProduct(req, res) {
         });
     }
 
-
-    if (body.images?.length==0) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product images is empty",
-        });
-    }
     try {
         let data = await productModel.findByIdAndUpdate(id, body, { new: true })
         if (!data) {
