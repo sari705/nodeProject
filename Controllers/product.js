@@ -148,6 +148,7 @@ export async function deleteProduct(req, res) {
 }
 
 export async function updateProduct(req, res) {
+    let biny = 5;
     let { id } = req.params;    
     let { body } = req;
     
