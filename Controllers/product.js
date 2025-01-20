@@ -148,7 +148,7 @@ export async function deleteProduct(req, res) {
 }
 
 export async function updateProduct(req, res) {
-    let biny = 5;
+    
     let { id } = req.params;    
     let { body } = req;
     
@@ -173,7 +173,44 @@ export async function updateProduct(req, res) {
             message: "the product stock is too low",
         });
     }
+/////////////////////////////////////////
+    if(body.name?.length == 0)
+        delete body.name;
+    if(body.description?.length == 0)
+        delete body.description;
+    if(body.stock?.length == 0)
+        delete body.stock;
+    if(body.price?.length == 0)
+        delete body.price;
+    if(body.categories.type?.length == 0 && body.categories.enum == 0)
+        delete body.categories;
 
+    if(body.sizes?.length == 0)
+        delete body.sizes;
+    else{
+        let change = false;
+        for (let i = 0; i < body.sizes.length && !change; i++) {
+            change = body.sizes[i].length != 0;
+        }
+        if(!change)
+            delete body.sizes;
+    }
+
+    if(body.colors?.length == 0)
+        delete body.colors;
+    else{
+        let colChange = false;
+        for (let i = 0; i < body.colors.length && !colChange; i++) {
+            colChange = body.colors[i].length != 0;
+        }
+        if(!colChange)
+            delete body.colors;
+    }
+
+    if(body.tag.type?.length == 0 && body.tag.enum?.length == 0)
+        delete body.tag;
+    
+//////////////////////////////////////////
     try {
         let data = await productModel.findByIdAndUpdate(id, body, { new: true })
         if (!data) {
