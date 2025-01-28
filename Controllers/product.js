@@ -188,8 +188,10 @@ export async function updateProduct(req, res) {
         delete body.sizes;
     if(body.color.length == 0)
         delete body.color;
-    if(body.tag.type?.length == 0 && body.tag.enum?.length == 0)
+    if(body.tag.length == 0)
         delete body.tag;
+
+    console.log("body before update: "+body);
     
 //////////////////////////////////////////
     try {
