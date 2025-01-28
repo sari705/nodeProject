@@ -199,12 +199,14 @@ export async function updateProduct(req, res) {
     if(body.colors&&Array.isArray(body.colors) && body.colors.length == 0)
         delete body.colors;
     else{
-        let colChange = false;
+        if(Array.isArray(body.colors) ){
+            let colChange = false;
         for (let i = 0; i < body.colors.length && !colChange; i++) {
             colChange = body.colors[i].length != 0;
         }
         if(!colChange)
             delete body.colors;
+        }        
     }
 
     if(body.tag.type?.length == 0 && body.tag.enum?.length == 0)
