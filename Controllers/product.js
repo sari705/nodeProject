@@ -153,7 +153,7 @@ export async function updateProduct(req, res) {
     let { body } = req;
     
 
-    if (body.name?.length >0&&body.name.length <3) {
+    if (body.name?.length > 0&&body.name.length <3) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product name is too short",
@@ -184,31 +184,10 @@ export async function updateProduct(req, res) {
         delete body.price;
     if(body.categories.type?.length == 0 && body.categories.enum == 0)
         delete body.categories;
-
     if(body.sizes?.length == 0)
         delete body.sizes;
-    else{
-        let change = false;
-        for (let i = 0; i < body.sizes.length && !change; i++) {
-            change = body.sizes[i].length != 0;
-        }
-        if(!change)
-            delete body.sizes;
-    }
-
-    if(body.colors&&Array.isArray(body.colors) && body.colors.length == 0)
+    if(body.colors.length == 0)
         delete body.colors;
-    else{
-        if(Array.isArray(body.colors) ){
-            let colChange = false;
-        for (let i = 0; i < body.colors.length && !colChange; i++) {
-            colChange = body.colors[i].length != 0;
-        }
-        if(!colChange)
-            delete body.colors;
-        }        
-    }
-
     if(body.tag.type?.length == 0 && body.tag.enum?.length == 0)
         delete body.tag;
     
