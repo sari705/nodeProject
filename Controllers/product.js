@@ -182,7 +182,7 @@ export async function updateProduct(req, res) {
         delete body.stock;
     if(body.price?.length == 0)
         delete body.price;
-    if(body.categories.type?.length == 0 && body.categories.enum == 0)
+    if(body.categories.length == 0)
         delete body.categories;
     if(body.sizes?.length == 0)
         delete body.sizes;
