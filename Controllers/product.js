@@ -186,8 +186,8 @@ export async function updateProduct(req, res) {
         delete body.categories;
     if(body.sizes?.length == 0)
         delete body.sizes;
-    if(body.colors.length == 0)
-        delete body.colors;
+    if(body.color.length == 0)
+        delete body.color;
     if(body.tag.type?.length == 0 && body.tag.enum?.length == 0)
         delete body.tag;
     
