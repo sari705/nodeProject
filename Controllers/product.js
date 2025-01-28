@@ -196,7 +196,7 @@ export async function updateProduct(req, res) {
             delete body.sizes;
     }
 
-    if(body.colors?.length == 0)
+    if(body.colors&&Array.isArray(body.colors) && body.colors.length == 0)
         delete body.colors;
     else{
         let colChange = false;
