@@ -70,6 +70,13 @@ export async function signUp(req, res) {
             message: "name and phone are required"
         })
     }
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        title: "valid password",
+        message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+      });
+    }
 
     try{
         let users = await userModel.find({ username:body.username, password: body.password })
@@ -91,6 +98,7 @@ export async function signUp(req, res) {
         let newUser = new userModel({...body, role:"USER"})
         console.log("newUser: ", newUser)
         await newUser.save()
+        delete newUser.password;
         return res.json(newUser)
     }
     catch (e) {
@@ -130,10 +138,28 @@ export async function updateUser(req, res) {
     }
 }
 
+////////////////////////////////////////////////////
 export async function updatePassword(req, res) {
-    let { id } = req.params;
+    let { id } = req.body;
     let { password } = req.body;
     try {
+
+        if (!isValidObjectId(id)) {
+            return res.status(400).json({
+              title: "object id is not valid",
+              message: "not in correct ObjectId format",
+            });
+          }
+
+        // בדיקת סיסמא חזקה
+  const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      title: "valid password",
+      message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+    });
+  }
+
         let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true })
         if (!data) {
             return res.status(404).json({
@@ -141,7 +167,8 @@ export async function updatePassword(req, res) {
                 message: "no user with such id " + id
             })
         }
-        res.json(data)
+        delete data.password;
+        res.json(data);
     }
     catch (e) {
         res.status("400").json(
