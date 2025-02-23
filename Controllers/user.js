@@ -40,11 +40,11 @@ export async function getUser(req, res) {
 
 export async function logIn(req, res) {
     let { body } = req;
-    if (!body.password || !body.username) {
-        return res.status(401).json({ title: "missing", message: "name and password are required" })
+    if (!body.password || !body.email) {
+        return res.status(401).json({ title: "missing", message: "email and password are required" })
     }
     try {
-        let data = await userModel.findOne({ username: body.username, password: body.password })
+        let data = await userModel.findOne({ email: body.email, password: body.password })
         if (!data) {
             return res.status(404).json({
                 title: "no such details",
@@ -78,8 +78,16 @@ export async function signUp(req, res) {
       });
     }
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
+  if (!emailRegex.test(body.email)) {
+    return res.status(400).json({
+      title: "invalid email",
+      message: "invalid email, please enter correct email",
+    });
+  }
+
     try{
-        let users = await userModel.find({ username:body.username, password: body.password })
+        let users = await userModel.find({ email:body.email })
         if (users.length > 0) {
             return res.status("400").json({
                 title: "log in",
