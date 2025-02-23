@@ -1,8 +1,11 @@
 import { productModel } from "../Models/product.js";
 
 export async function getAllProducts(req, res) {
+    const page = req.query.page || 1;
+    const limit = 10; // מספר מוצרים לכל דף
+    const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
     try {
-        const products = await productModel.find()
+        const products = await productModel.find().skip(skip).limit(limit);
         res.json({ products })
     }
     catch (e) {
@@ -86,14 +89,14 @@ export async function addProduct(req, res) {
         });
     }
 
-    if (body.price<0) {
+    if (body.price < 0) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product price is too low",
         });
     }
 
-    if (body.stock<0) {
+    if (body.stock < 0) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product stock is too low",
@@ -113,12 +116,12 @@ export async function addProduct(req, res) {
             message: "the product images is empty",
         });
     }
-    
+
     let newProduct = new productModel(body);
     try {
         await newProduct.save();
         res.json(newProduct);
-    } 
+    }
     catch (e) {
         res.status(400).json({ title: "adding new product faild", message: e.message });
     }
@@ -148,52 +151,52 @@ export async function deleteProduct(req, res) {
 }
 
 export async function updateProduct(req, res) {
-    
-    let { id } = req.params;    
-    let { body } = req;
-    
 
-    if (body.name?.length > 0&&body.name.length <3) {
+    let { id } = req.params;
+    let { body } = req;
+
+
+    if (body.name?.length > 0 && body.name.length < 3) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product name is too short",
         });
     }
 
-    if (body.price&&body.price<0) {
+    if (body.price && body.price < 0) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product price is too low",
         });
     }
 
-    if (body.stock&&body.stock<0) {
+    if (body.stock && body.stock < 0) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product stock is too low",
         });
     }
-/////////////////////////////////////////
-    if(body.name?.length == 0)
+    /////////////////////////////////////////
+    if (body.name?.length == 0)
         delete body.name;
-    if(body.description?.length == 0)
+    if (body.description?.length == 0)
         delete body.description;
-    if(body.stock?.length == 0)
+    if (body.stock?.length == 0)
         delete body.stock;
-    if(body.price?.length == 0)
+    if (body.price?.length == 0)
         delete body.price;
-    if(body.categories.length == 0)
+    if (body.categories.length == 0)
         delete body.categories;
-    if(body.sizes?.length == 0)
+    if (body.sizes?.length == 0)
         delete body.sizes;
-    if(body.color.length == 0)
+    if (body.color.length == 0)
         delete body.color;
-    if(body.tag.length == 0)
+    if (body.tag.length == 0)
         delete body.tag;
 
-    console.log("body before update: "+body);
-    
-//////////////////////////////////////////
+    console.log("body before update: " + body);
+
+    //////////////////////////////////////////
     try {
         let data = await productModel.findByIdAndUpdate(id, body, { new: true })
         if (!data) {
@@ -210,5 +213,20 @@ export async function updateProduct(req, res) {
                 title: "could not update",
                 message: e.message
             })
+    }
+}
+
+export async function getTotalPages(req, res) {
+    try {
+        const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
+        const totalPages = Math.ceil(totalProducts / 10); // סך כל הדפים
+        res.json(totalPages);
+    }
+
+    catch (e) {
+        res.json({
+            title: "failed",
+            message: e.message
+        })
     }
 }
