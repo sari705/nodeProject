@@ -1,4 +1,3 @@
-import { title } from "process";
 import { userModel } from "../Models/user.js";
 import lodash from "lodash";
 const { omit } = lodash;
@@ -46,11 +45,12 @@ export async function logIn(req, res) {
     }
 
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
-    if (!passwordRegex.test(password)) {
-        return res.status(400).json({
-            title: "valid password",
-            message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
-        });
+
+    if (!passwordRegex.test(body.password)) {
+      return res.status(400).json({
+        title: "valid password",
+        message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+      });
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
