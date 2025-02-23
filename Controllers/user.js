@@ -39,10 +39,28 @@ export async function getUser(req, res) {
 }
 
 export async function logIn(req, res) {
+    
     let { body } = req;
     if (!body.password || !body.email) {
         return res.status(401).json({ title: "missing", message: "email and password are required" })
     }
+
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        title: "valid password",
+        message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+      });
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
+    if (!emailRegex.test(body.email)) {
+      return res.status(400).json({
+        title: "invalid email",
+        message: "invalid email, please enter correct email",
+      });
+    }
+  
     try {
         let data = await userModel.findOne({ email: body.email, password: body.password })
         if (!data) {
