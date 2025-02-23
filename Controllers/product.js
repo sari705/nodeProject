@@ -220,7 +220,7 @@ export async function getTotalPages(req, res) {
     try {
         const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
         const totalPages = Math.ceil(totalProducts / 10); // סך כל הדפים
-        res.json({totalPages});
+        res.json({ totalPages });
     }
 
     catch (e) {
