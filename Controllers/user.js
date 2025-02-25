@@ -1,7 +1,6 @@
-import { title } from "process";
 import { userModel } from "../Models/user.js";
 import lodash from "lodash";
-const {omit} = lodash;
+const { omit } = lodash;
 
 export async function getAllUsers(req, res) {
     try {
@@ -39,13 +38,14 @@ export async function getUser(req, res) {
 }
 
 export async function logIn(req, res) {
-    
+
     let { body } = req;
     if (!body.password || !body.email) {
         return res.status(401).json({ title: "missing", message: "email and password are required" })
     }
 
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+
     if (!passwordRegex.test(body.password)) {
       return res.status(400).json({
         title: "valid password",
@@ -55,12 +55,12 @@ export async function logIn(req, res) {
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
     if (!emailRegex.test(body.email)) {
-      return res.status(400).json({
-        title: "invalid email",
-        message: "invalid email, please enter correct email",
-      });
+        return res.status(400).json({
+            title: "invalid email",
+            message: "invalid email, please enter correct email",
+        });
     }
-  
+
     try {
         let data = await userModel.findOne({ email: body.email, password: body.password })
         if (!data) {
@@ -80,32 +80,33 @@ export async function logIn(req, res) {
     }
 }
 
+
 export async function signUp(req, res) {
     let { body } = req
-    if (!body.username || !body.password || !body.email || !body.phone) {
+    if (!body.username || !body.password || !body.email) {
         return res.status("404").json({
             title: "missing detailes",
-            message: "name and phone are required"
+            message: "name password and email are required"
         })
     }
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
     if (!passwordRegex.test(password)) {
-      return res.status(400).json({
-        title: "valid password",
-        message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
-      });
+        return res.status(400).json({
+            title: "valid password",
+            message: "not a strong password, please enter a password with letters and numbers between 7-15 characters",
+        });
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
-  if (!emailRegex.test(body.email)) {
-    return res.status(400).json({
-      title: "invalid email",
-      message: "invalid email, please enter correct email",
-    });
-  }
+    if (!emailRegex.test(body.email)) {
+        return res.status(400).json({
+            title: "invalid email",
+            message: "invalid email, please enter correct email",
+        });
+    }
 
-    try{
-        let users = await userModel.find({ email:body.email })
+    try {
+        let users = await userModel.find({ email: body.email })
         if (users.length > 0) {
             return res.status("400").json({
                 title: "log in",
@@ -121,7 +122,7 @@ export async function signUp(req, res) {
     }
 
     try {
-        let newUser = new userModel({...body, role:"USER"})
+        let newUser = new userModel({ ...body, role: "USER" })
         console.log("newUser: ", newUser)
         await newUser.save()
         delete newUser.password;
@@ -145,7 +146,7 @@ export async function updateUser(req, res) {
     }
     try {
         let data = await userModel.findByIdAndUpdate(id, body, { new: true })
-        
+
         if (!data) {
             return res.status(404).json({
                 title: "not found",
@@ -172,19 +173,19 @@ export async function updatePassword(req, res) {
 
         if (!isValidObjectId(id)) {
             return res.status(400).json({
-              title: "object id is not valid",
-              message: "not in correct ObjectId format",
+                title: "object id is not valid",
+                message: "not in correct ObjectId format",
             });
-          }
+        }
 
         // בדיקת סיסמא חזקה
-  const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
-  if (!passwordRegex.test(password)) {
-    return res.status(400).json({
-      title: "valid password",
-      message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
-    });
-  }
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({
+                title: "valid password",
+                message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+            });
+        }
 
         let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true })
         if (!data) {
