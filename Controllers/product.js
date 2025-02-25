@@ -1,4 +1,5 @@
 import { productModel } from "../Models/product.js";
+// import Categories from "../utils/categories.js";
 
 export async function getAllProducts(req, res) {
     const page = req.query.page || 1;
@@ -6,6 +7,26 @@ export async function getAllProducts(req, res) {
     const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
     try {
         const products = await productModel.find().skip(skip).limit(limit);
+        res.json({ products })
+    }
+    catch (e) {
+        res.status(400).json({
+            title: "can`t get all",
+            messege: e.message
+        })
+    }
+}
+
+
+export async function getProductsByCategory(req, res) {
+    // const page = req.query.page || 1;
+    // const limit = 10; // מספר מוצרים לכל דף
+    // const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
+    const category = req.query.category;
+    // const { category } = req.params
+    try {
+        const products = await productModel.find({ categories: category })
+        // .skip(skip).limit(limit);
         res.json({ products })
     }
     catch (e) {
@@ -220,7 +241,7 @@ export async function getTotalPages(req, res) {
     try {
         const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
         const totalPages = Math.ceil(totalProducts / 10); // סך כל הדפים
-        res.json({totalPages});
+        res.json({ totalPages });
     }
 
     catch (e) {
