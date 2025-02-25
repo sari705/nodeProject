@@ -6,6 +6,7 @@ import { addProduct, deleteProduct,getAllProducts, getProduct, updateProduct, ge
 const router = Router()
 router.get("/", getAllProducts)
 router.get("/pages", getTotalPages)
+router.get("/search", )
 router.get("/:id", getProduct)
 router.post("/category", getProductsByCategory)
 router.delete("/:id", deleteProduct)

@@ -252,3 +252,32 @@ export async function getTotalPages(req, res) {
         })
     }
 }
+
+export async function searchProduct(req, res) {
+    const {query} = req.query;
+    if (!query) {
+        try {
+            const products = await productModel.find().skip(skip).limit(limit);
+            res.json({ products })
+        }
+        catch (e) {
+            res.status(400).json({
+                title: "can`t get all",
+                messege: e.message
+            })
+        }
+    }
+    else {
+        try {
+            const products = await productModel.find({ 
+                name: { $regex: query, $options: "i" }  // חיפוש לא רגיש לרישיות
+            });
+    
+            res.json({ products });
+        }
+        catch (e) {
+            res.status(500).json({ message: e.message });
+
+        }
+    }
+}    
