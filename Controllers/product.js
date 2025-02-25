@@ -22,8 +22,9 @@ export async function getProductsByCategory(req, res) {
     // const page = req.query.page || 1;
     // const limit = 10; // מספר מוצרים לכל דף
     // const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
-    const category = req.query.category;
+    // const category = req.query.category;
     // const { category } = req.params
+    const {category} = req.body
     try {
         const products = await productModel.find({ categories: category })
         // .skip(skip).limit(limit);
