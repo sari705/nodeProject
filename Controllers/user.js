@@ -1,4 +1,5 @@
 import { userModel } from "../Models/user.js";
+import { generateToken } from "../token.js";
 import lodash from "lodash";
 const { omit } = lodash;
 
@@ -62,27 +63,36 @@ export async function logIn(req, res) {
     }
 
     try {
-        let data = await userModel.findOne({ email: body.email, password: body.password })
+        let data = await userModel.findOne({ email: body.email, password: body.password });
+    
         if (!data) {
             return res.status(404).json({
                 title: "no such details",
                 message: "log in failed"
-            })
+            });
         }
+    
         let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
-        res.json({ dataWithoutPassword })
-    }
+        const token = generateToken(dataWithoutPassword);
+    
+        res.setHeader("Authorization", `Bearer ${token}`);
+    
+        // החזרת הנתונים והטוקן בתגובה
+        res.json({ data: dataWithoutPassword, token });
+    } 
     catch (e) {
-        res.status("500").json({
+        res.status(500).json({
             title: "server error",
             message: e.message
-        })
+        });
     }
+    
 }
 
 
 export async function signUp(req, res) {
-    let { body } = req
+    let { body } = req;
+    
     if (!body.username || !body.password || !body.email) {
         return res.status("404").json({
             title: "missing detailes",
@@ -122,11 +132,15 @@ export async function signUp(req, res) {
     }
 
     try {
-        let newUser = new userModel({ ...body, role: "USER" })
-        console.log("newUser: ", newUser)
-        await newUser.save()
+        let newUser = new userModel({ ...body, role: "USER" });
+        console.log("newUser: ", newUser);
+        await newUser.save();
         delete newUser.password;
-        return res.json(newUser)
+        const token = generateToken(newUser);
+        res.setHeader("Authorization", `Bearer ${token}`);
+    
+        // החזרת הנתונים והטוקן בתגובה
+        return res.json(newUser, token)
     }
     catch (e) {
         res.status("400").json({ title: "cannot add", message: e.message })
