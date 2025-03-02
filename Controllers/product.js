@@ -1,4 +1,5 @@
 import { productModel } from "../Models/product.js";
+// import Categories from "../utils/categories.js";
 
 export async function getAllProducts(req, res) {
     const page = req.query.page || 1;
@@ -6,6 +7,27 @@ export async function getAllProducts(req, res) {
     const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
     try {
         const products = await productModel.find().skip(skip).limit(limit);
+        res.json({ products })
+    }
+    catch (e) {
+        res.status(400).json({
+            title: "can`t get all",
+            messege: e.message
+        })
+    }
+}
+
+
+export async function getProductsByCategory(req, res) {
+    // const page = req.query.page || 1;
+    // const limit = 10; // מספר מוצרים לכל דף
+    // const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
+    // const category = req.query.category;
+    // const { category } = req.params
+    const {category} = req.body
+    try {
+        const products = await productModel.find({ categories: category })
+        // .skip(skip).limit(limit);
         res.json({ products })
     }
     catch (e) {
@@ -96,19 +118,19 @@ export async function addProduct(req, res) {
         });
     }
 
-    if (body.stock < 0) {
+    if (body.stock < 1) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product stock is too low",
         });
     }
 
-    if (!body.categories.length) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product categories is empty",
-        });
-    }
+        if (!body.categories.length) {
+            return res.status(400).json({
+                title: "detailes are not correct",
+                message: "the product categories is empty",
+            });
+        }
 
     if (!body.images.length) {
         return res.status(400).json({
@@ -230,3 +252,32 @@ export async function getTotalPages(req, res) {
         })
     }
 }
+
+export async function searchProduct(req, res) {
+    const {query} = req.query;
+    if (!query) {
+        try {
+            const products = await productModel.find().skip(skip).limit(limit);
+            res.json({ products })
+        }
+        catch (e) {
+            res.status(400).json({
+                title: "can`t get all",
+                messege: e.message
+            })
+        }
+    }
+    else {
+        try {
+            const products = await productModel.find({ 
+                name: { $regex: query, $options: "i" }  // חיפוש לא רגיש לרישיות
+            });
+    
+            res.json({ products });
+        }
+        catch (e) {
+            res.status(500).json({ message: e.message });
+
+        }
+    }
+}    

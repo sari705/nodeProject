@@ -100,7 +100,7 @@ export async function signUp(req, res) {
         })
     }
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(body.password)) {
         return res.status(400).json({
             title: "valid password",
             message: "not a strong password, please enter a password with letters and numbers between 7-15 characters",
