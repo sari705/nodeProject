@@ -118,19 +118,19 @@ export async function addProduct(req, res) {
         });
     }
 
-    if (body.stock < 0) {
+    if (body.stock < 1) {
         return res.status(400).json({
             title: "detailes are not correct",
             message: "the product stock is too low",
         });
     }
 
-    if (!body.categories.length) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product categories is empty",
-        });
-    }
+        if (!body.categories.length) {
+            return res.status(400).json({
+                title: "detailes are not correct",
+                message: "the product categories is empty",
+            });
+        }
 
     if (!body.images.length) {
         return res.status(400).json({
