@@ -140,7 +140,7 @@ export async function signUp(req, res) {
         res.setHeader("Authorization", `Bearer ${token}`);
     
         // החזרת הנתונים והטוקן בתגובה
-        return res.json(newUser, token)
+        return res.json({user: newUser, token})
     }
     catch (e) {
         res.status("400").json({ title: "cannot add", message: e.message })
