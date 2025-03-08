@@ -31,6 +31,7 @@ export function checkManager(req, res, next) {
         let result = jwt.verify(token,"baby"
             //  process.env.SECRET_KEY
             )
+        console.log("role: ", result.role); 
         if (result.role == "MANAGER")
             next();
         return res.status(403).json({ title: "forbidden", message: "אינך מורשה לפעולה זו" })
