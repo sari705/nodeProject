@@ -27,7 +27,7 @@ export function checkManager(req, res, next) {
     if (!token)
         return res.status(401).json({ title: "משתמש לא מזוהה", message: "עליך לבצע כניסה קודם" });
     token = token.split(" ")[1];
-    console.log(token);
+    console.log("token: ", token);
     
     try {
         let result = jwt.verify(token, "baby"
