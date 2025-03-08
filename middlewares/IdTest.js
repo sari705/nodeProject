@@ -27,14 +27,17 @@ export function checkManager(req, res, next) {
     if (!token)
         return res.status(401).json({ title: "משתמש לא מזוהה", message: "עליך לבצע כניסה קודם" });
     token = token.split(" ")[1];
+    console.log(token);
+    
     try {
         let result = jwt.verify(token, "baby"
             //  process.env.SECRET_KEY
         )
         console.log("Decoded JWT:", result);
         console.log("role: ", result.role);
-        if (result.role == "MANAGER")
+        if (result.role == "MANAGER"){
             next();
+        }
         return res.status(403).json({ title: "forbidden", message: "אינך מורשה לפעולה זו" })
     }
     catch (err) {
