@@ -30,8 +30,10 @@ export const validateSchema = Joi.object({
     description: Joi.string().required(),
     images: Joi.array().items(Joi.string()).min(1).required(),
     stock: Joi.number().integer().min(1).required(),
-    tag: Joi.array().items(Joi.string()).required(),
-    categories: Joi.string().min(1).required()
+    tag: Joi.array().items(Joi.string().valid(...Object.values(TagsEnum))).required(),
+    categories: Joi.string().valid(...Object.values(Categories)).required(),
+    sizes: Joi.array().items(Joi.string()).optional(),
+    colors: Joi.array().items(Joi.string()).optional()
 });
 
 export const productModel = model("product", productSchema)
