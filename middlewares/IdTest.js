@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export function checkMiddlware(req, res, next) {
-    token = req.headers.authorization;////מה שמגיע בבקשה ב haeders
+    let token = req.headers.authorization;////מה שמגיע בבקשה ב haeders
     console.log("token in check: ", token);
     
     if (!token)
@@ -26,7 +26,7 @@ export function checkMiddlware(req, res, next) {
 
 export function checkManager(req, res, next) {
 
-    let token = req.headers.Authorization;
+    let token = req.headers.authorization;
     console.log(token);
     
     if (!token)
