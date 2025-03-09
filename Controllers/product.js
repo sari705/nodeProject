@@ -1,4 +1,6 @@
 import { productModel } from "../Models/product.js";
+import { validateSchema } from "../Models/product.js";
+import joi from "joi";
 // import Categories from "../utils/categories.js";
 
 export async function getAllProducts(req, res) {
@@ -60,85 +62,10 @@ export async function getProduct(req, res) {
 
 export async function addProduct(req, res) {
     let { body } = req;
-    let isErr = false;
-    let err;
-    if (!body.name) {
-        err += "name, ";
-        isErr = true;
+    const validate = validateSchema.validate(body)
+    if (validate.error) {
+        return res.status(400).json(validate.error.details[0].message)
     }
-
-    if (!body.price) {
-        err += "price, ";
-        isErr = true;
-    }
-
-    if (!body.description) {
-        err += "description, ";
-        isErr = true;
-    }
-
-    if (!body.images) {
-        err += "images, ";
-        isErr = true;
-    }
-
-    if (!body.stock) {
-        err += "stock, ";
-        isErr = true;
-    }
-
-    if (!body.tag) {
-        err += "tag, ";
-        isErr = true;
-    }
-
-    if (!body.categories) {
-        err += "categories ";
-        isErr = true;
-    }
-
-    if (isErr) {
-        return res.status(404).json({
-            title: "missing detailes",
-            message: err + "required",
-        });
-    }
-
-    if (body.name.length < 3) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product name is too short",
-        });
-    }
-
-    if (body.price < 0) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product price is too low",
-        });
-    }
-
-    if (body.stock < 1) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product stock is too low",
-        });
-    }
-
-        if (!body.categories.length) {
-            return res.status(400).json({
-                title: "detailes are not correct",
-                message: "the product categories is empty",
-            });
-        }
-
-    if (!body.images.length) {
-        return res.status(400).json({
-            title: "detailes are not correct",
-            message: "the product images is empty",
-        });
-    }
-
     let newProduct = new productModel(body);
     try {
         await newProduct.save();
