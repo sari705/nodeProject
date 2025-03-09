@@ -30,7 +30,7 @@ export const validateSchema = Joi.object({
     description: Joi.string().required(),
     images: Joi.array().items(Joi.string()).min(1).required(),
     stock: Joi.number().integer().min(1).required(),
-    tag: Joi.string().required(),
+    tag: Joi.array().items(Joi.string()).required(),
     categories: Joi.array().items(Joi.string()).min(1).required()
 });
 
