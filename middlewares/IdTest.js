@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 export function checkMiddlware(req, res, next) {
     token = req.headers.authorization;////מה שמגיע בבקשה ב haeders
+    console.log("token in check: ", token);
+    
     if (!token)
         return res.status(401).json({
             title: "משתמש לא מזוהה", message: "עליך לבצע כניסה"
