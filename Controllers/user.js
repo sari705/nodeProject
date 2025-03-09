@@ -150,7 +150,7 @@ export async function signUp(req, res) {
 export async function updateUser(req, res) {
     let { id } = req.params;
     let { body } = req;
-    const allowedFields = ['username', 'password'];
+    const allowedFields = ['username', 'email'];
     body = lodash.pick(body, allowedFields)
     if (Object.keys(body).length === 0) {
         return res.status(400).json({
