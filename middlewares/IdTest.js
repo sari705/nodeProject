@@ -25,6 +25,8 @@ export function checkMiddlware(req, res, next) {
 export function checkManager(req, res, next) {
 
     let token = req.headers.Authorization;
+    console.log(token);
+    
     if (!token)
         return res.status(401).json({ title: "משתמש לא מזוהה", message: "עליך לבצע כניסה קודם" });
     token = token.split(" ")[1];
