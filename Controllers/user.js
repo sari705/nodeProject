@@ -2,6 +2,9 @@ import { userModel } from "../Models/user.js";
 import { generateToken } from "../token.js";
 import lodash from "lodash";
 const { omit } = lodash;
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import dotenv from "dotenv";
 
 export async function getAllUsers(req, res) {
     try {
@@ -48,10 +51,10 @@ export async function logIn(req, res) {
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
 
     if (!passwordRegex.test(body.password)) {
-      return res.status(400).json({
-        title: "valid password",
-        message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
-      });
+        return res.status(400).json({
+            title: "valid password",
+            message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+        });
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
@@ -64,35 +67,35 @@ export async function logIn(req, res) {
 
     try {
         let data = await userModel.findOne({ email: body.email, password: body.password });
-    
+
         if (!data) {
             return res.status(404).json({
                 title: "no such details",
                 message: "log in failed"
             });
         }
-    
+
         let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
         const token = generateToken(dataWithoutPassword);
-    
+
         res.setHeader("Authorization", `Bearer ${token}`);
-    
+
         // החזרת הנתונים והטוקן בתגובה
         res.json({ data: dataWithoutPassword, token });
-    } 
+    }
     catch (e) {
         res.status(500).json({
             title: "server error",
             message: e.message
         });
     }
-    
+
 }
 
 
 export async function signUp(req, res) {
     let { body } = req;
-    
+
     if (!body.username || !body.password || !body.email) {
         return res.status("404").json({
             title: "missing detailes",
@@ -138,9 +141,9 @@ export async function signUp(req, res) {
         delete newUser.password;
         const token = generateToken(newUser);
         res.setHeader("Authorization", `Bearer ${token}`);
-    
+
         // החזרת הנתונים והטוקן בתגובה
-        return res.json({user: newUser, token})
+        return res.json({ user: newUser, token })
     }
     catch (e) {
         res.status("400").json({ title: "cannot add", message: e.message })
@@ -218,4 +221,9 @@ export async function updatePassword(req, res) {
                 message: e.message
             })
     }
+}
+
+export function googleAuth(req, res) {
+    const token = generateToken(req.user);
+    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
 }
