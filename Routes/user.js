@@ -9,6 +9,7 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 router.get("/me", async (req, res) => {
     // 🔹 חילוץ הטוקן מה-Header
     const token = req.header("Authorization")?.split(" ")[1];
+    console.log("token from request:", token);
 
     if (!token) {
         return res.status(401).json({ message: "No token provided" });
