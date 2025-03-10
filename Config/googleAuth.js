@@ -2,7 +2,6 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import dotenv from "dotenv";
 import { userModel } from "../Models/user.js";
-import { generateToken } from "../token.js";
 
 dotenv.config();
 
@@ -11,15 +10,15 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "/api/user/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await userModel.findOne({ googleId: profile.id });
+        let user = await userModel.findOne({ googleId: profile.id }); // 🔹 חיפוש לפי `googleId`
 
         if (!user) {
           user = new userModel({
-            googleId: profile.id,
+            googleId: profile.id, // 🔹 שמירה בשדה `googleId`
             username: profile.displayName,
             email: profile.emails[0].value,
           });
@@ -39,6 +38,10 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await userModel.findById(id);
-  done(null, user);
+  try {
+    const user = await userModel.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
 });

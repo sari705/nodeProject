@@ -2,6 +2,7 @@ import {Schema, model } from "mongoose"
 
 
 const userSchema = Schema({
+    googleId: { type: String, unique: true, sparse: true }, // ✅ שדה מיוחד להתחברות עם גוגל
     username: String,
     password: String,
     email: String,
