@@ -19,7 +19,7 @@ router.get("/me", async (req, res) => {
         const decoded = jwt.verify(token, "baby");
 
         // 🔹 שליפת המשתמש מהדאטהבייס
-        const user = await userModel.findById(decoded.id).select("-password");
+        const user = await userModel.findById(decoded.userId).select("-password");
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
