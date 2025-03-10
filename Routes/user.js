@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import passport from "passport";
 import { getAllUsers, logIn, signUp, updateUser, updatePassword, getUser, googleAuth } from "../Controllers/user.js";
 import { checkManager, checkMiddlware } from "../middlewares/IdTest.js";
 
