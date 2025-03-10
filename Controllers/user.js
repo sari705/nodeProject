@@ -227,7 +227,11 @@ export function googleAuth(req, res) {
         return res.status(401).json({ message: "User not authenticated" });
     }
     // יצירת טוקן עם הנתונים של המשתמש
-    const token = generateToken({ id: req.user.id, username: req.user.username, email: req.user.email })
+    const token = generateToken({ 
+        _id: req.user.id,    // שיהיה _id
+        username: req.user.username,
+        role: "USER",    
+    })  // או role שנשלף ממשתמש כלשהו
     // שמירת הטוקן בעוגייה
     res.cookie("token", token, {
         httpOnly: true,
