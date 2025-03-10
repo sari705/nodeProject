@@ -28,7 +28,7 @@ router.get("/me", async (req, res) => {
         res.json(user);
     } catch (error) {
         console.error("Token verification failed:", error);
-        res.status(401).json({ message: "Invalid token" });
+        res.status(401).json({ message: "Invalid token", error });
     }
 });
 
