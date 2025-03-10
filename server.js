@@ -31,7 +31,7 @@ app.use(
         saveUninitialized: true,
         store: MongoStore.create({
             mongoUrl: process.env.MONGO_URI, // הכתובת של MongoDB שלך
-            collectionName: "sessions",
+            dbName:"shop",
         }),
     })
 );
