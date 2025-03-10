@@ -19,8 +19,14 @@ import MongoStore from "connect-mongo";
 const app = express();
 connectDB();
 
+const corsOptions = {
+    origin: process.env.CLIENT_URL || 'http://localhost:5173', // מקור האתר שלך ב-React
+    credentials: true,  // זה מאפשר שליחה של credentials כמו cookies
+};
 
-app.use(cors());
+
+
+app.use(cors(corsOptions));
 app.use(express.json())
 
 // ✅ הגדרת session לניהול התחברות
