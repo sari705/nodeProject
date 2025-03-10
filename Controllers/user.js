@@ -227,10 +227,10 @@ export function googleAuth(req, res) {
         return res.status(401).json({ message: "User not authenticated" });
     }
     // יצירת טוקן עם הנתונים של המשתמש
-    const token = generateToken({ 
+    const token = generateToken({
         _id: req.user.id,    // שיהיה _id
         username: req.user.username,
-        role: "USER",    
+        role: "USER",
     })  // או role שנשלף ממשתמש כלשהו
     // שמירת הטוקן בעוגייה
     res.cookie("token", token, {
@@ -240,4 +240,31 @@ export function googleAuth(req, res) {
     });
     // ✅ הפניה חזרה ל-React עם הטוקן בפרמטר
     res.redirect(`http://localhost:5173/products?token=${token}`);
+}
+
+export async function getUserByToken(req, res) {
+    // 🔹 חילוץ הטוקן מה-Header
+    const token = req.header("Authorization")?.split(" ")[1];
+    console.log("token from request:", token);
+
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    try {
+        // 🔹 אימות ופענוח הטוקן
+        const decoded = jwt.verify(token, "baby");
+
+        // 🔹 שליפת המשתמש מהדאטהבייס
+        const user = await userModel.findById(decoded.userId).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Token verification failed:", error);
+        res.status(401).json({ message: "Invalid token", error });
+    }
 }
