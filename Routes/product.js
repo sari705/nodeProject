@@ -13,7 +13,6 @@ router.get("/:id", getProduct)
 router.delete("/:id", checkManager, deleteProduct)
 router.put("/:id", checkManager, updateProduct)
 router.post("/", checkManager, addProduct)
-
 router.post("/category", getProductsByCategory)
 
 export default router;

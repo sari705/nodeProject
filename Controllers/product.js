@@ -1,7 +1,6 @@
 import { productModel } from "../Models/product.js";
 import { validateSchema } from "../Models/product.js";
 import joi from "joi";
-// import Categories from "../utils/categories.js";
 
 export async function getAllProducts(req, res) {
     const page = req.query.page || 1;

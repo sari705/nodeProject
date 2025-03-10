@@ -1,9 +1,7 @@
 import { userModel } from "../Models/user.js";
 import { generateToken } from "../token.js";
 import lodash from "lodash";
-const { omit } = lodash;
 import jwt from "jsonwebtoken";
-
 
 export async function getAllUsers(req, res) {
     try {
@@ -41,7 +39,6 @@ export async function getUser(req, res) {
 }
 
 export async function logIn(req, res) {
-
     let { body } = req;
     if (!body.password || !body.email) {
         return res.status(401).json({ title: "missing", message: "email and password are required" })
@@ -177,24 +174,21 @@ export async function updateUser(req, res) {
             {
                 title: "could not update",
                 message: e.message
-            })
+            }
+        )
     }
 }
 
-////////////////////////////////////////////////////
 export async function updatePassword(req, res) {
     let { id } = req.body;
     let { password } = req.body;
     try {
-
         if (!isValidObjectId(id)) {
             return res.status(400).json({
                 title: "object id is not valid",
                 message: "not in correct ObjectId format",
             });
         }
-
-        // בדיקת סיסמא חזקה
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
@@ -226,44 +220,36 @@ export function googleAuth(req, res) {
     if (!req.user) {
         return res.status(401).json({ message: "User not authenticated" });
     }
-    // יצירת טוקן עם הנתונים של המשתמש
     const token = generateToken({
-        _id: req.user.id,    // שיהיה _id
+        _id: req.user.id,
         username: req.user.username,
         role: "USER",
-    })  // או role שנשלף ממשתמש כלשהו
-    // שמירת הטוקן בעוגייה
+    })
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
     });
-    // ✅ הפניה חזרה ל-React עם הטוקן בפרמטר
     res.redirect(`http://localhost:5173/products?token=${token}`);
 }
 
 export async function getUserByToken(req, res) {
-    // 🔹 חילוץ הטוקן מה-Header
     const token = req.header("Authorization")?.split(" ")[1];
-    console.log("token from request:", token);
 
     if (!token) {
         return res.status(401).json({ message: "No token provided" });
     }
 
     try {
-        // 🔹 אימות ופענוח הטוקן
         const decoded = jwt.verify(token, "baby");
 
-        // 🔹 שליפת המשתמש מהדאטהבייס
         const user = await userModel.findById(decoded.userId).select("-password");
-
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
         res.json(user);
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Token verification failed:", error);
         res.status(401).json({ message: "Invalid token", error });
     }
