@@ -17,12 +17,9 @@ router.post("/login", logIn)
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 router.get(
-  "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    const token = generateToken(req.user);
-    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
-  }
-);
+    "/google/callback", 
+    passport.authenticate("google", { failureRedirect: "/login" }),
+     googleAuth);
+
 
 export default router

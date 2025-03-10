@@ -11,7 +11,7 @@ import enumRouter from "./Routes/enum.js";
 import { logToFile } from "./middlewares/logToFile.js";
 import session from "express-session";
 import passport from "passport";
-import "./Config/googleAuth.js"; // טוען את הגדרות גוגל
+import "./Config/googleAuth.js";
 
 
 const app = express();
