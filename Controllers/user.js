@@ -226,25 +226,14 @@ export function googleAuth(req, res) {
     if (!req.user) {
         return res.status(401).json({ message: "User not authenticated" });
     }
-
     // יצירת טוקן עם הנתונים של המשתמש
-    const token = jwt.sign(
-        {
-            id: req.user.id,
-            username: req.user.username,
-            email: req.user.email,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-    );
-
+    const token = generateToken({ id: req.user.id, username: req.user.username, email: req.user.email })
     // שמירת הטוקן בעוגייה
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
     });
-
     // ✅ הפניה חזרה ל-React עם הטוקן בפרמטר
     res.redirect(`http://localhost:5173/products?token=${token}`);
 }
