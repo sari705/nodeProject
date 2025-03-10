@@ -2,9 +2,8 @@ import { userModel } from "../Models/user.js";
 import { generateToken } from "../token.js";
 import lodash from "lodash";
 const { omit } = lodash;
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
 
 export async function getAllUsers(req, res) {
     try {
@@ -224,6 +223,13 @@ export async function updatePassword(req, res) {
 }
 
 export function googleAuth(req, res) {
-    const token = generateToken(req.user);
-    res.redirect(`http://localhost:5173/products?token=${token}`);
+    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    });
+
+    res.redirect("http://localhost:5173/products");
 }

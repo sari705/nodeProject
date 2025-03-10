@@ -6,6 +6,13 @@ import { checkManager, checkMiddlware } from "../middlewares/IdTest.js";
 const router = Router()
 
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/me", (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
+    res.json(req.user);
+});
+
 router.get("/", checkManager, getAllUsers)
 router.get("/:id", getUser)
 
