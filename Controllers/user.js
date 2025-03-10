@@ -223,13 +223,13 @@ export function googleAuth(req, res) {
     const token = generateToken({
         _id: req.user.id,
         username: req.user.username,
-        role: "USER",
+        role: req.user.role,
     })
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-    });
+    // res.cookie("token", token, {
+    //     httpOnly: true,
+    //     secure: process.env.NODE_ENV === "production",
+    //     sameSite: "strict",
+    // });
     res.redirect(`http://localhost:5173/products?token=${token}`);
 }
 
