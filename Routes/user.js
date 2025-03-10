@@ -16,11 +16,11 @@ router.get("/me", async (req, res) => {
 
     try {
         // 🔹 אימות ופענוח הטוקן
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        const decoded = jwt.verify(token, "baby");
+
         // 🔹 שליפת המשתמש מהדאטהבייס
         const user = await userModel.findById(decoded.id).select("-password");
-        
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -44,9 +44,9 @@ router.post("/login", logIn)
 // **נתיבים להתחברות דרך גוגל**
 
 router.get(
-    "/google/callback", 
+    "/google/callback",
     passport.authenticate("google", { failureRedirect: "/login" }),
-     googleAuth);
+    googleAuth);
 
 
 export default router
