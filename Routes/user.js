@@ -4,6 +4,8 @@ import { getAllUsers, logIn, signUp, updateUser, updatePassword, getUser, google
 import { checkManager, checkMiddlware } from "../middlewares/IdTest.js";
 
 const router = Router()
+
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get("/", checkManager, getAllUsers)
 router.get("/:id", getUser)
 
@@ -14,7 +16,6 @@ router.post("/", signUp)
 router.post("/login", logIn)
 
 // **נתיבים להתחברות דרך גוגל**
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 router.get(
     "/google/callback", 

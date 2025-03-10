@@ -10,7 +10,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/api/user/google/callback",
+      callbackURL: "https://nodeproject-gd82.onrender.com/api/user/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
