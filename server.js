@@ -27,6 +27,10 @@ app.use(
         secret: process.env.SESSION_SECRET || "mySecretKey",
         resave: false,
         saveUninitialized: true,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI, // הכתובת של MongoDB שלך
+            collectionName: "sessions",
+        }),
     })
 );
 
