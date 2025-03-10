@@ -225,5 +225,5 @@ export async function updatePassword(req, res) {
 
 export function googleAuth(req, res) {
     const token = generateToken(req.user);
-    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+    res.redirect(`http://localhost:5173/products?token=${token}`);
 }
