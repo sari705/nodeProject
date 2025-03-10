@@ -6,11 +6,30 @@ import { checkManager, checkMiddlware } from "../middlewares/IdTest.js";
 const router = Router()
 
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-router.get("/me", (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "User not authenticated" });
+router.get("/me", async (req, res) => {
+    // 🔹 חילוץ הטוקן מה-Header
+    const token = req.header("Authorization")?.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
     }
-    res.json(req.user);
+
+    try {
+        // 🔹 אימות ופענוח הטוקן
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // 🔹 שליפת המשתמש מהדאטהבייס
+        const user = await userModel.findById(decoded.id).select("-password");
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Token verification failed:", error);
+        res.status(401).json({ message: "Invalid token" });
+    }
 });
 
 router.get("/", checkManager, getAllUsers)

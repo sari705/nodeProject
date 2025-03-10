@@ -245,11 +245,6 @@ export function googleAuth(req, res) {
         sameSite: "strict",
     });
 
-    // מחזיר את כל הנתונים של המשתמש כדי שה-React יוכל להשתמש בהם
-    res.json({
-        id: req.user.id,
-        username: req.user.username,
-        email: req.user.email,
-        token: token,
-    });
+    // ✅ הפניה חזרה ל-React עם הטוקן בפרמטר
+    res.redirect(`http://localhost:5173/products?token=${token}`);
 }
