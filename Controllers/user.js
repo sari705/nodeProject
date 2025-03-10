@@ -223,13 +223,33 @@ export async function updatePassword(req, res) {
 }
 
 export function googleAuth(req, res) {
-    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+    }
 
+    // יצירת טוקן עם הנתונים של המשתמש
+    const token = jwt.sign(
+        {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+    );
+
+    // שמירת הטוקן בעוגייה
     res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
     });
 
-    res.redirect("http://localhost:5173/products");
+    // מחזיר את כל הנתונים של המשתמש כדי שה-React יוכל להשתמש בהם
+    res.json({
+        id: req.user.id,
+        username: req.user.username,
+        email: req.user.email,
+        token: token,
+    });
 }
