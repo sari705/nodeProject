@@ -1,5 +1,7 @@
 import { orderModel } from "../Models/order.js";
 import { userModel } from "../Models/user.js";
+import { productModel } from "../Models/product.js";
+
 import mongoose from "mongoose";
 
 export async function getAllOrders(req, res) {
