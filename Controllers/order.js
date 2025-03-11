@@ -55,7 +55,7 @@ export async function addOrder(req, res) {
             isErr = true;
         }
     
-        if (!body.minimalProduct) {
+        if (!body.minimalProduct||!body.minimalProduct.length) {
             err += "minimalProduct, ";
             isErr = true;
         }
