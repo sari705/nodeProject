@@ -39,67 +39,6 @@ export async function getOrderByUser(req, res) {
 
 //good
 // minimalProduct
-// export const addOrder = async (req, res, next) => {
-//     let { body } = req;
-//     if (!body.userId || !body.address || !body.minimalProduct || body.minimalProduct.length == 0)
-//         return res.status(404).json({
-//             title: "missing body data",
-//             message: "address, userId ,minimalProduct are required",
-//         });
-//     for (let j = 0; j < body.minimalProduct.length; j++) {
-//         if (!body.minimalProduct[j].price || !body.minimalProduct[j]._id)
-//             return res.status(404).json({
-//                 title: "missing body data",
-//                 message: "_id and price in minimalProduct are required",
-//             });
-//         if (!body.minimalProduct[j].amount)
-//             body.minimalProduct[j].amount = 1;
-//     }
-//     try {
-//         let user = await userModel.findById(body.userId);
-//         if (!user)
-//             return res.status(404).json({ title: "no such user", message: "userId not found" });
-
-//         let productids = body.minimalProduct.map(item => item._id);
-//         let arrFullProducts = await productModel.find({ _id: { $in: productids } });
-//         console.log(productids, arrFullProducts)///בדיקה בשבילי
-//         if (arrFullProducts.length != productids.length)
-//             return res.status(404)
-//                 .json({ title: "one or more products are invalid", message: "check if products are in store" });// היה רק כמה id ומצא לפיהם את המוצרים אם יש שלש id ורק שתי מוצרים מסיבה מסויימת ,למה שלא ימשיך קניה של שתי מוצרים ????? לסדר חשוב
-//         //עלול להווצר כאן בעיה שאם מישהו הכניס מחיר לא נכון על מוצר . לדעתי צריך לקחת את המחיר מהמערך של המוצרים המלאים .השאלה היא אם הם שווים בסדרם
-//         let cost = 0;
-//         for (let i = 0; i < body.minimalProduct.length; i++)
-//             cost += body.minimalProduct[i].price * body.minimalProduct[i].amount;
-//         //לשים לב : לא שמרתי את המערך המלא בתוך ההזמנה רק השתמשתי איתו לעזרתי אם אני מחליטה לשמור על המוצרים המלאים בתוך כל הזמנה אני צריכה לשנות 
-//         if (cost >= 200)
-//             body.shippingPrice = 0;
-//         else if (cost >= 100)
-//             body.shippingPrice = 15;
-//         else
-//             body.shippingPrice = 30;
-
-//         body.finalPrice = cost + body.shippingPrice;
-
-//         body.date = new Date();
-//         body.deadline = body.deadline.setDate(body.date.getDate() + 13);
-
-// //         // Initialize body.deadline as a Date object if it's not already
-// // if (!(body.deadline instanceof Date)) {
-// //     body.deadline = new Date(body.deadline);
-// // }
-
-// // // Add 13 days to the deadline date
-// // body.deadline.setDate(body.deadline.getDate() + 13);
-
-
-//         let newOrder = new orderModel(body);
-//         await newOrder.save();
-//         res.json(newOrder);
-//     } catch (err) {
-//         res.status(400).json({ title: "cannot save order", message: err.message });
-//     }
-// };
-
 export const addOrder = async (req, res, next) => {
     let { body } = req;
     if (!body.userId || !body.address || !body.minimalProduct || body.minimalProduct.length == 0)
@@ -126,11 +65,12 @@ export const addOrder = async (req, res, next) => {
         console.log(productids, arrFullProducts)///בדיקה בשבילי
         if (arrFullProducts.length != productids.length)
             return res.status(404)
-                .json({ title: "one or more products are invalid", message: "check if products are in store" });
+                .json({ title: "one or more products are invalid", message: "check if products are in store" });// היה רק כמה id ומצא לפיהם את המוצרים אם יש שלש id ורק שתי מוצרים מסיבה מסויימת ,למה שלא ימשיך קניה של שתי מוצרים ????? לסדר חשוב
+        //עלול להווצר כאן בעיה שאם מישהו הכניס מחיר לא נכון על מוצר . לדעתי צריך לקחת את המחיר מהמערך של המוצרים המלאים .השאלה היא אם הם שווים בסדרם
         let cost = 0;
         for (let i = 0; i < body.minimalProduct.length; i++)
             cost += body.minimalProduct[i].price * body.minimalProduct[i].amount;
-
+        //לשים לב : לא שמרתי את המערך המלא בתוך ההזמנה רק השתמשתי איתו לעזרתי אם אני מחליטה לשמור על המוצרים המלאים בתוך כל הזמנה אני צריכה לשנות 
         if (cost >= 200)
             body.shippingPrice = 0;
         else if (cost >= 100)
@@ -140,15 +80,17 @@ export const addOrder = async (req, res, next) => {
 
         body.finalPrice = cost + body.shippingPrice;
 
-        body.date = new Date();  // מאתחל את תאריך היום
+        body.date = new Date();
+        body.deadline = body.date.setDate(body.date.getDate() + 13);
 
-        // אם body.deadline לא מאותחל כ- Date, מאתחל אותו
-        if (!(body.deadline instanceof Date)) {
-            body.deadline = new Date(body.deadline); // מאתחל את deadline אם הוא לא כזה
-        }
+//         // Initialize body.deadline as a Date object if it's not already
+// if (!(body.deadline instanceof Date)) {
+//     body.deadline = new Date(body.deadline);
+// }
 
-        // מוסיף 13 ימים לתאריך הדדליין
-        body.deadline.setDate(body.deadline.getDate() + 13);
+// // Add 13 days to the deadline date
+// body.deadline.setDate(body.deadline.getDate() + 13);
+
 
         let newOrder = new orderModel(body);
         await newOrder.save();
@@ -157,7 +99,8 @@ export const addOrder = async (req, res, next) => {
         res.status(400).json({ title: "cannot save order", message: err.message });
     }
 };
-///////////////////////////////////////////////////////////////
+
+
 export async function deleteOrder(req, res) {
     let { id } = req.params;
     let order = await orderModel.findById(id)
