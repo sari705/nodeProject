@@ -225,11 +225,6 @@ export function googleAuth(req, res) {
         username: req.user.username,
         role: req.user.role,
     })
-    // res.cookie("token", token, {
-    //     httpOnly: true,
-    //     secure: process.env.NODE_ENV === "production",
-    //     sameSite: "strict",
-    // });
     res.redirect(`http://localhost:5173/products?token=${token}`);
 }
 
@@ -241,16 +236,22 @@ export async function getUserByToken(req, res) {
     }
 
     try {
-        const decoded = jwt.verify(token, "baby");
+        const decoded = jwt.verify(token, "baby"); // החלף את ה-secret במשתנה סביבה
 
         const user = await userModel.findById(decoded.userId).select("-password");
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
         res.json(user);
-    }
+    } 
     catch (error) {
         console.error("Token verification failed:", error);
+
+        if (error.name === "TokenExpiredError") {
+            return res.status(403).json({ message: "Token expired. Please log in again." });
+        }
+
         res.status(401).json({ message: "Invalid token", error });
     }
 }
