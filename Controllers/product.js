@@ -167,6 +167,8 @@ export async function updateProduct(req, res) {
 export async function getTotalPages(req, res) {
     try {
         const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
+        console.log(totalProducts);
+        
         const totalPages = Math.ceil(totalProducts / 15); // סך כל הדפים
         res.json({ totalPages });
     }
