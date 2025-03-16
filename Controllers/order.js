@@ -79,20 +79,21 @@ export const addOrder = async (req, res, next) => {
             body.shippingPrice = 30;
 
         body.finalPrice = cost + body.shippingPrice;
-
-        body.date = new Date();
+        const today = new Date();
+        body.date = today;
+        body.deadline = today.setDate(body.date.getDate() + 13);
         // body.deadline = body.date.setDate(body.date.getDate() + 13);
 
-//         // Initialize body.deadline as a Date object if it's not already
-// if (!(body.deadline instanceof Date)) {
-//     body.deadline = new Date(body.deadline);
-// }
+        //         // Initialize body.deadline as a Date object if it's not already
+        // if (!(body.deadline instanceof Date)) {
+        //     body.deadline = new Date(body.deadline);
+        // }
 
-// // Add 13 days to the deadline date
-// body.deadline.setDate(body.deadline.getDate() + 13);
+        // // Add 13 days to the deadline date
+        // body.deadline.setDate(body.deadline.getDate() + 13);
 
 
-        let newOrder = new orderModel({...body, deadline: body.date.setDate(body.date.getDate() + 13) });
+        let newOrder = new orderModel({ ...body, deadline: today.setDate(body.date.getDate() + 13) });
         await newOrder.save();
         res.json(newOrder);
     } catch (err) {
