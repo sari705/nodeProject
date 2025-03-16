@@ -4,7 +4,7 @@ import joi from "joi";
 
 export async function getAllProducts(req, res) {
     const page = req.query.page || 1;
-    const limit = 9; // מספר מוצרים לכל דף
+    const limit = 15; // מספר מוצרים לכל דף
     const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
     try {
         const products = await productModel.find().skip(skip).limit(limit);
@@ -167,7 +167,9 @@ export async function updateProduct(req, res) {
 export async function getTotalPages(req, res) {
     try {
         const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
-        const totalPages = Math.ceil(totalProducts / 10); // סך כל הדפים
+        console.log(totalProducts);
+        
+        const totalPages = Math.ceil(totalProducts / 15); // סך כל הדפים
         res.json({ totalPages });
     }
 
