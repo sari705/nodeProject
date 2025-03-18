@@ -1,6 +1,7 @@
 import { orderModel } from "../Models/order.js";
 import { userModel } from "../Models/user.js";
 import { productModel } from "../Models/product.js";
+import { completeOrder } from "./email.js";
 
 import mongoose from "mongoose";
 
@@ -94,6 +95,7 @@ export const addOrder = async (req, res, next) => {
 
         let newOrder = new orderModel({...body, deadline: body.date.setDate(body.date.getDate() + 13) });
         await newOrder.save();
+        completeOrder("sari125705@gmail.com", "פרטי ההזמנה שלך...");
         res.json(newOrder);
     } catch (err) {
         res.status(400).json({ title: "cannot save order", message: err.message });
