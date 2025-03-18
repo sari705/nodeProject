@@ -133,7 +133,7 @@ export async function signUp(req, res) {
         });
     }
 
-    bcript.hash(body.password, 10, (err, hash) => {
+    bcrypt.hash(body.password, 10, (err, hash) => {
         if (err) {
             console.log(err);
             return res.status(500).json({ title: "bcript function faild", message: err.message });
@@ -230,7 +230,7 @@ export async function updatePassword(req, res) {
             });
         }
 
-        bcript.hash(password, 10, (err, hash) => {
+        bcrypt.hash(password, 10, (err, hash) => {
             if (err) {
                 console.log(err);
                 return res.status(500).json({ title: "bcript function faild", message: err.message });
