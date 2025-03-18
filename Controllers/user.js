@@ -74,20 +74,20 @@ export async function logIn(req, res) {
                 message: "log in failed"
             });
         }
-
-        bcrypt.compare(body.password, data.password, (err, result) => {
-            if (err) {
-                console.log("Error comparing passwords:", err);
-                return res.status(401).json({ title: "Error comparing passwords", message: err.message });
-            }
-            if (result) {
-                console.log("Password is correct!");
-                // אפשר להתחבר
-            } else {
-                console.log("Incorrect password!");
-                return res.status(401).json({ title: " Incorrect password" });
-            }
-        });
+        //יש בעיה שיש כבר משתמשים עם סיסמאות לא מוצפנות
+        // bcrypt.compare(body.password, data.password, (err, result) => {
+        //     if (err) {
+        //         console.log("Error comparing passwords:", err);
+        //         return res.status(401).json({ title: "Error comparing passwords", message: err.message });
+        //     }
+        //     if (result) {
+        //         console.log("Password is correct!");
+        //         // אפשר להתחבר
+        //     } else {
+        //         console.log("Incorrect password!");
+        //         return res.status(401).json({ title: " Incorrect password" });
+        //     }
+        // });
 
 
         let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
@@ -132,20 +132,20 @@ export async function signUp(req, res) {
             message: "invalid email, please enter correct email",
         });
     }
-
-    bcrypt.hash(body.password, 10, (err, hash) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).json({ title: "bcript function faild", message: err.message });
-        }
-        if (hash) {
-            body.password = hash;
-            console.log("hashed password", hash);
-        }
-        else {
-            console.log(hash);
-        }
-    })
+    //כאן יש בעיה כי כבר שמורים לי משתמשים עם ססמאות לא מוצפנות
+    // bcrypt.hash(body.password, 10, (err, hash) => {
+    //     if (err) {
+    //         console.log(err);
+    //         return res.status(500).json({ title: "bcript function faild", message: err.message });
+    //     }
+    //     if (hash) {
+    //         body.password = hash;
+    //         console.log("hashed password", hash);
+    //     }
+    //     else {
+    //         console.log(hash);
+    //     }
+    // })
 
     try {
         let users = await userModel.find({ email: body.email })
@@ -216,12 +216,12 @@ export async function updatePassword(req, res) {
     let { id } = req.body;
     let { password } = req.body;
     try {
-        if (!isValidObjectId(id)) 
+        if (!isValidObjectId(id))
             return res.status(400).json({
                 title: "object id is not valid",
                 message: "not in correct ObjectId format",
             });
-        
+
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
@@ -244,7 +244,7 @@ export async function updatePassword(req, res) {
             }
         })
 
-        let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true })
+        let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true }).lean()
         if (!data) {
             return res.status(404).json({
                 title: "not found",
@@ -283,7 +283,7 @@ export async function getUserByToken(req, res) {
     }
 
     try {
-        const decoded = jwt.verify(token, "baby"); // החלף את ה-secret במשתנה סביבה
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const user = await userModel.findById(decoded.userId).select("-password");
         if (!user) {
