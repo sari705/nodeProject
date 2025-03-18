@@ -1,5 +1,7 @@
 import { productModel } from "../Models/product.js";
 import { validateSchema } from "../Models/product.js";
+import { isValidObjectId } from "mongoose";
+
 import joi from "joi";
 
 export async function getAllProducts(req, res) {
@@ -25,7 +27,7 @@ export async function getProductsByCategory(req, res) {
     // const skip = (page - 1) * limit; // חישוב כמות המוצרים שיש לדלג עליהם
     // const category = req.query.category;
     // const { category } = req.params
-    const {category} = req.body
+    const { category } = req.body
     try {
         const products = await productModel.find({ categories: category })
         // .skip(skip).limit(limit);
@@ -42,6 +44,12 @@ export async function getProductsByCategory(req, res) {
 export async function getProduct(req, res) {
     try {
         let { id } = req.params;
+        if (!isValidObjectId(id))
+            return res.status(400).json({
+                title: "object id is not valid",
+                message: "not in correct ObjectId format",
+            });
+
         let data = await productModel.findById(id)
         if (!data) {
             return res.status(404).json({
@@ -79,6 +87,12 @@ export async function addProduct(req, res) {
 export async function deleteProduct(req, res) {
     let { id } = req.params;
 
+    if (!isValidObjectId(id))
+        return res.status(400).json({
+            title: "object id is not valid",
+            message: "not in correct ObjectId format",
+        });
+
     try {
         let product = await productModel.findByIdAndDelete(id)
         if (!product) {
@@ -103,6 +117,11 @@ export async function updateProduct(req, res) {
     let { id } = req.params;
     let { body } = req;
 
+    if (!isValidObjectId(id))
+        return res.status(400).json({
+            title: "object id is not valid",
+            message: "not in correct ObjectId format",
+        });
 
     if (body.name?.length > 0 && body.name.length < 3) {
         return res.status(400).json({
@@ -168,7 +187,7 @@ export async function getTotalPages(req, res) {
     try {
         const totalProducts = await productModel.countDocuments(); // סופרת את כל המוצרים
         console.log(totalProducts);
-        
+
         const totalPages = Math.ceil(totalProducts / 15); // סך כל הדפים
         res.json({ totalPages });
     }
@@ -182,7 +201,7 @@ export async function getTotalPages(req, res) {
 }
 
 export async function searchProduct(req, res) {
-    const {query} = req.query;
+    const { query } = req.query;
     if (!query) {
         try {
             const products = await productModel.find().skip(skip).limit(limit);
@@ -197,10 +216,10 @@ export async function searchProduct(req, res) {
     }
     else {
         try {
-            const products = await productModel.find({ 
+            const products = await productModel.find({
                 name: { $regex: query, $options: "i" }  // חיפוש לא רגיש לרישיות
             });
-    
+
             res.json({ products });
         }
         catch (e) {
