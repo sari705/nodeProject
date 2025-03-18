@@ -3,6 +3,7 @@ import { generateToken } from "../token.js";
 import lodash from "lodash";
 import jwt from "jsonwebtoken";
 import bcrypt, { hash } from 'bcrypt';
+import { isValidObjectId } from "mongoose";
 
 
 export async function getAllUsers(req, res) {
@@ -84,7 +85,7 @@ export async function logIn(req, res) {
                 // אפשר להתחבר
             } else {
                 console.log("Incorrect password!");
-                return res.status(401).json({title: " Incorrect password"});
+                return res.status(401).json({ title: " Incorrect password" });
             }
         });
 
@@ -215,12 +216,12 @@ export async function updatePassword(req, res) {
     let { id } = req.body;
     let { password } = req.body;
     try {
-        if (!isValidObjectId(id)) {
+        if (!isValidObjectId(id)) 
             return res.status(400).json({
                 title: "object id is not valid",
                 message: "not in correct ObjectId format",
             });
-        }
+        
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
@@ -228,6 +229,20 @@ export async function updatePassword(req, res) {
                 message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
             });
         }
+
+        bcript.hash(password, 10, (err, hash) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ title: "bcript function faild", message: err.message });
+            }
+            if (hash) {
+                password = hash;
+                console.log("hashed password", hash);
+            }
+            else {
+                console.log(hash);
+            }
+        })
 
         let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true })
         if (!data) {
