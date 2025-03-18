@@ -1,6 +1,6 @@
 import mailgun from "mailgun-js";
 
-const DOMAIN = "your-domain.com"; // שימי כאן את הדומיין שאישרת ב-Mailgun
+const DOMAIN = "sandboxxxxxxxxxxxxxxxxx.mailgun.org"; // שימי כאן את הדומיין שאישרת ב-Mailgun
 const mg = mailgun({ apiKey: "088f922e1fa469bdfee2c99ddaa88e983d4b3a2aeb973dc1", domain: DOMAIN });
 
 export function sendEmail(to, subject, text) {
