@@ -66,7 +66,7 @@ export async function logIn(req, res) {
     }
 
     try {
-        let data = await userModel.findOne({ email: body.email });
+        let data = await userModel.findOne({ email: body.email, password: body.password });
 
         if (!data) {
             return res.status(404).json({
