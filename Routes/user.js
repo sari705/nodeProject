@@ -10,7 +10,7 @@ router.get("/me", getUserByToken);
 router.get("/", checkManager, getAllUsers)
 router.get("/:id", getUser)
 router.put("/:id", checkMiddlware, updateUser)
-router.put("/", updatePassword)
+router.put("/", checkMiddlware, updatePassword)
 router.post("/", signUp)
 router.post("/login", logIn)
 router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), googleAuth);

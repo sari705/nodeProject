@@ -2,6 +2,9 @@ import { userModel } from "../Models/user.js";
 import { generateToken } from "../token.js";
 import lodash from "lodash";
 import jwt from "jsonwebtoken";
+import bcrypt, { hash } from 'bcrypt';
+import { isValidObjectId } from "mongoose";
+
 
 export async function getAllUsers(req, res) {
     try {
@@ -43,15 +46,16 @@ export async function logIn(req, res) {
     if (!body.password || !body.email) {
         return res.status(401).json({ title: "missing", message: "email and password are required" })
     }
+    //bcript אין צורך לבדוק עם הביטוי הרגולרי כי כבר בודקים עם 
 
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
+    // const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
 
-    if (!passwordRegex.test(body.password)) {
-        return res.status(400).json({
-            title: "valid password",
-            message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
-        });
-    }
+    // if (!passwordRegex.test(body.password)) {
+    //     return res.status(400).json({
+    //         title: "valid password",
+    //         message: "not a strong password, please enter a password with letters, numbers and between 7-15 characters",
+    //     });
+    // }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // email format
     if (!emailRegex.test(body.email)) {
@@ -62,7 +66,7 @@ export async function logIn(req, res) {
     }
 
     try {
-        let data = await userModel.findOne({ email: body.email, password: body.password });
+        let data = await userModel.findOne({ email: body.email });
 
         if (!data) {
             return res.status(404).json({
@@ -70,6 +74,21 @@ export async function logIn(req, res) {
                 message: "log in failed"
             });
         }
+        //יש בעיה שיש כבר משתמשים עם סיסמאות לא מוצפנות
+        // bcrypt.compare(body.password, data.password, (err, result) => {
+        //     if (err) {
+        //         console.log("Error comparing passwords:", err);
+        //         return res.status(401).json({ title: "Error comparing passwords", message: err.message });
+        //     }
+        //     if (result) {
+        //         console.log("Password is correct!");
+        //         // אפשר להתחבר
+        //     } else {
+        //         console.log("Incorrect password!");
+        //         return res.status(401).json({ title: " Incorrect password" });
+        //     }
+        // });
+
 
         let dataWithoutPassword = lodash.omit(data.toObject(), ["password"]);
         const token = generateToken(dataWithoutPassword);
@@ -113,6 +132,20 @@ export async function signUp(req, res) {
             message: "invalid email, please enter correct email",
         });
     }
+    //כאן יש בעיה כי כבר שמורים לי משתמשים עם ססמאות לא מוצפנות
+    // bcrypt.hash(body.password, 10, (err, hash) => {
+    //     if (err) {
+    //         console.log(err);
+    //         return res.status(500).json({ title: "bcript function faild", message: err.message });
+    //     }
+    //     if (hash) {
+    //         body.password = hash;
+    //         console.log("hashed password", hash);
+    //     }
+    //     else {
+    //         console.log(hash);
+    //     }
+    // })
 
     try {
         let users = await userModel.find({ email: body.email })
@@ -183,12 +216,12 @@ export async function updatePassword(req, res) {
     let { id } = req.body;
     let { password } = req.body;
     try {
-        if (!isValidObjectId(id)) {
+        if (!isValidObjectId(id))
             return res.status(400).json({
                 title: "object id is not valid",
                 message: "not in correct ObjectId format",
             });
-        }
+
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{7,15}$/; // לפחות 7 תווים, כולל אותיות ומספרים
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
@@ -197,7 +230,21 @@ export async function updatePassword(req, res) {
             });
         }
 
-        let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true })
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ title: "bcript function faild", message: err.message });
+            }
+            if (hash) {
+                password = hash;
+                console.log("hashed password", hash);
+            }
+            else {
+                console.log(hash);
+            }
+        })
+
+        let data = await userModel.findByIdAndUpdate(id, { $set: { password } }, { new: true }).lean()
         if (!data) {
             return res.status(404).json({
                 title: "not found",
@@ -236,7 +283,7 @@ export async function getUserByToken(req, res) {
     }
 
     try {
-        const decoded = jwt.verify(token, "baby"); // החלף את ה-secret במשתנה סביבה
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const user = await userModel.findById(decoded.userId).select("-password");
         if (!user) {
@@ -244,7 +291,7 @@ export async function getUserByToken(req, res) {
         }
 
         res.json(user);
-    } 
+    }
     catch (error) {
         console.error("Token verification failed:", error);
 

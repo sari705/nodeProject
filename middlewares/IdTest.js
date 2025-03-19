@@ -10,7 +10,7 @@ export function checkMiddlware(req, res, next) {
         });
     token = token.split(" ")[1];
     try {
-        let result = jwt.verify(token, "baby")
+        let result = jwt.verify(token, process.env.JWT_SECRET)
         console.log(result);
         req.user = result;
         next();
@@ -38,7 +38,7 @@ export function checkManager(req, res, next) {
     console.log("token: ", token);
 
     try {
-        let result = jwt.verify(token, "baby");
+        let result = jwt.verify(token, process.env.JWT_SECRET);
         console.log("Decoded JWT:", result);
         console.log("role: ", result.role);
 

@@ -2,6 +2,8 @@ import { orderModel } from "../Models/order.js";
 import { userModel } from "../Models/user.js";
 import { productModel } from "../Models/product.js";
 import { completeOrder } from "./email.js";
+import { isValidObjectId } from "mongoose";
+
 
 import mongoose from "mongoose";
 
@@ -21,6 +23,11 @@ export async function getAllOrders(req, res) {
 export async function getOrderByUser(req, res) {
     try {
         let { id } = req.params;
+        if (!isValidObjectId(id))
+            return res.status(400).json({
+                title: "object id is not valid",
+                message: "not in correct ObjectId format",
+            });
         let data = await orderModel.find({ userId: id })
         if (!data) {
             return res.status(404).json({
@@ -106,6 +113,11 @@ export const addOrder = async (req, res, next) => {
 
 export async function deleteOrder(req, res) {
     let { id } = req.params;
+    if (!isValidObjectId(id))
+        return res.status(400).json({
+            title: "object id is not valid",
+            message: "not in correct ObjectId format",
+        });
     let order = await orderModel.findById(id)
     if (!order.isSetOff) {
         try {
@@ -135,6 +147,11 @@ export async function deleteOrder(req, res) {
 
 export async function updateOrder(req, res) {
     let { id } = req.params;
+    if (!isValidObjectId(id))
+        return res.status(400).json({
+            title: "object id is not valid",
+            message: "not in correct ObjectId format",
+        });
     try {
         let data = await productModel.findByIdAndUpdate(id, { $set: { isSetOff: true } }, { new: true })
         if (!data) {
