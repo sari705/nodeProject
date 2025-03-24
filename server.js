@@ -20,7 +20,7 @@ const app = express();
 connectDB();
 
 const corsOptions = {
-    origin: process.env.CLIENT_URL || 'https://tinydreams.netlify.app', // מקור האתר שלך ב-React
+    origin: process.env.CLIENT_URL || 'http://localhost:5173/', // מקור האתר שלך ב-React
     credentials: true,  // זה מאפשר שליחה של credentials כמו cookies
 };
 
