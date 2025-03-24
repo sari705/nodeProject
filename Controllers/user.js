@@ -272,7 +272,7 @@ export function googleAuth(req, res) {
         username: req.user.username,
         role: req.user.role,
     })
-    res.redirect(`http://localhost:5173/products?token=${token}`);
+    res.redirect(`${process.env.CLIENT_URL}/products?token=${token}`);
 }
 
 export async function getUserByToken(req, res) {
