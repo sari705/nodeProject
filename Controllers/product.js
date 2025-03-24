@@ -156,7 +156,7 @@ export async function updateProduct(req, res) {
         delete body.categories;
     if (body.sizes?.length == 0)
         delete body.sizes;
-    if (body.color.length == 0)
+    if (body.color?.length == 0)
         delete body.color;
     if (body.tag.length == 0)
         delete body.tag;
