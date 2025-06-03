@@ -6,11 +6,14 @@
 
 פרויקט זה הוא שרת לניהול קטלוג מוצרים, הכולל תמיכה בעדכון, מחיקה, הוספה ושליפה של מוצרים ממסד הנתונים. המערכת פותחה בסביבת Express וכוללת טיפול בשדות כמו צבעים, מידות, תגיות, קטגוריות ועוד.
 
+המערכת תומכת בהרשמה דרך Google OAuth.
+
 ## טכנולוגיות
 
 * Node.js
 * Express.js
 * MongoDB (באמצעות Mongoose)
+* Google OAuth 2.0
 
 ## התקנה מקומית
 
@@ -33,6 +36,10 @@ node server.js
 ```env
 PORT=10000
 MONGO_URL=<your_mongodb_connection_string>
+GOOGLE_CLIENT_ID=<your_google_client_id>
+GOOGLE_CLIENT_SECRET=<your_google_client_secret>
+SESSION_SECRET=<your_session_secret>
+CLIENT_URL=https://your-client-url.com
 ```
 
 ## מסלולים עיקריים (Routes)
@@ -41,6 +48,8 @@ MONGO_URL=<your_mongodb_connection_string>
 * `POST /products` - הוספת מוצר חדש
 * `PUT /products/:id` - עדכון מוצר קיים
 * `DELETE /products/:id` - מחיקת מוצר
+* `GET /auth/google` - התחברות עם גוגל
+* `GET /auth/google/callback` - נקודת חזרה אחרי אישור בגוגל
 
 ## ולידציה ועדכונים חכמים
 
@@ -53,10 +62,4 @@ MONGO_URL=<your_mongodb_connection_string>
 
 המערכת מחזירה תשובות מתאימות (404/400) בהתאם למצב.
 
-## תרומות
 
-תרומות לקוד פתוחות! ניתן לפתוח Pull Request או ליצור Issue להצעות.
-
-## רישיון
-
-קוד פתוח תחת רישיון MIT.
